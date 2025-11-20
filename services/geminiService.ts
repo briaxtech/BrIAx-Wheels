@@ -73,12 +73,32 @@ MANEJO DE OBJECIONES:
 let chatSession: Chat | null = null;
 let currentLanguage: Language = 'en';
 
+// Helper to safely get API Key
+const getApiKey = () => {
+  try {
+    // In Vite with define: { 'process.env': ... }, this works.
+    // We also check if process is defined to be extra safe.
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {
+    console.warn("Error accessing API Key:", e);
+  }
+  return '';
+};
+
 export const getChatSession = (language: Language): Chat => {
+  // Create new session if language changes or none exists
   if (!chatSession || currentLanguage !== language) {
     currentLanguage = language;
     
-    // @ts-ignore
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const apiKey = getApiKey();
+    
+    if (!apiKey) {
+      console.warn("Gemini Service: API Key is missing. Chatbot will not function correctly.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     
     const languageInstruction = language === 'es' 
       ? "CONTEXTO: El usuario está viendo la versión en ESPAÑOL del sitio web. Prioriza responder en Español." 
@@ -96,13 +116,24 @@ export const getChatSession = (language: Language): Chat => {
 
 export const sendMessageToGemini = async (message: string, language: Language): Promise<string> => {
   try {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      throw new Error("API_KEY_MISSING");
+    }
+
     const chat = getChatSession(language);
     const result = await chat.sendMessage({ message });
     return result.text || (language === 'es' ? "Lo siento, no he podido procesar tu solicitud." : "I'm sorry, I couldn't process that request.");
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     
-    // Check for common authentication errors
+    // Handle specific error cases for better UX
+    if (error.message === "API_KEY_MISSING") {
+        return language === 'es'
+          ? "Error de sistema: Falta la clave API. Por favor, contacte al administrador."
+          : "System Error: API Key is missing. Please contact administrator.";
+    }
+
     if (error.message?.includes("API key not valid") || error.toString().includes("403")) {
        return language === 'es'
         ? "Error de autorización: La clave API no es válida."

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { sendMessageToGemini, getChatSession } from './geminiService';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { getChatSession } from './geminiService';
 import { GoogleGenAI } from '@google/genai';
 
 // Mock the GoogleGenAI SDK
@@ -24,11 +24,17 @@ vi.mock('@google/genai', () => {
 });
 
 describe('Gemini Service', () => {
+  // Store original process.env
   const originalEnv = process.env;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset process.env before each test
     process.env = { ...originalEnv };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
   });
 
   it('should initialize GoogleGenAI with the provided key', async () => {
@@ -40,11 +46,13 @@ describe('Gemini Service', () => {
     expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: 'test-api-key' });
   });
 
-  it('should create a chat session with correct system instructions', async () => {
-    process.env.API_KEY = 'test-api-key';
+  it('should create a chat session even if key is missing (graceful handling)', async () => {
+    delete process.env.API_KEY;
     
     const chat = getChatSession('en');
     
+    // It should still try to create the instance (the SDK might throw later, but our factory shouldn't crash)
+    expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: '' });
     expect(chat).toBeDefined();
   });
 });
