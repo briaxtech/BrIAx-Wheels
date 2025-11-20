@@ -1,6 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Car, Language } from '../types';
 import { translations } from '../translations';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, A11y } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const fleetData: Car[] = [
   {
@@ -10,7 +15,6 @@ const fleetData: Car[] = [
     pricePerDay: 35,
     passengers: 4,
     transmission: 'Manual',
-    // White Fiat 500
     imageUrl: 'https://images.unsplash.com/photo-1515569067071-ec3b51335dd0?auto=format&fit=crop&w=800&q=80',
     features: ['Bluetooth', 'A/C', 'City Mode']
   },
@@ -21,7 +25,6 @@ const fleetData: Car[] = [
     pricePerDay: 55,
     passengers: 5,
     transmission: 'Automatic',
-    // Modern White Hatchback
     imageUrl: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&w=800&q=80',
     features: ['Nav', 'Apple CarPlay', 'Cruise Control']
   },
@@ -32,7 +35,6 @@ const fleetData: Car[] = [
     pricePerDay: 85,
     passengers: 5,
     transmission: 'Automatic',
-    // Modern White Audi SUV
     imageUrl: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?auto=format&fit=crop&w=800&q=80',
     features: ['Leather Seats', 'Panoramic Roof', '4x4']
   },
@@ -43,7 +45,6 @@ const fleetData: Car[] = [
     pricePerDay: 140,
     passengers: 7,
     transmission: 'Automatic',
-    // Mercedes Van
     imageUrl: 'https://images.unsplash.com/photo-1566008885218-90abf9200ddb?auto=format&fit=crop&w=800&q=80',
     features: ['Luxury Interior', 'Dual Zone AC', 'Tinted Glass']
   },
@@ -54,7 +55,6 @@ const fleetData: Car[] = [
     pricePerDay: 95,
     passengers: 4,
     transmission: 'Automatic',
-    // Mini Cooper Convertible (Top Down)
     imageUrl: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=80',
     features: ['Soft Top', 'Sport Mode', 'Premium Sound']
   },
@@ -65,7 +65,6 @@ const fleetData: Car[] = [
     pricePerDay: 110,
     passengers: 4,
     transmission: 'Automatic',
-    // Jeep Wrangler White
     imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
     features: ['Off-road Ready', 'Removable Top', 'Tow Bar']
   },
@@ -77,19 +76,8 @@ interface FleetProps {
 
 export const Fleet: React.FC<FleetProps> = ({ language }) => {
   const t = translations[language].fleet;
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-
-  const touchThreshold = 50; // px before triggering a swipe
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % fleetData.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + fleetData.length) % fleetData.length);
-  };
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
 
   const renderCard = (car: Car) => (
     <div 
@@ -128,7 +116,6 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
           </div>
         </div>
 
-        {/* Features list preview */}
         <div className="flex flex-wrap gap-2 mb-4">
             {car.features.map((f, i) => (
                 <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md border border-slate-200">
@@ -169,71 +156,58 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
           </button>
         </div>
 
-        {/* Mobile carousel */}
-        <div 
-          className="md:hidden relative mx-auto w-full px-4 box-border"
-          onTouchStart={(e) => {
-            touchStartX.current = e.touches[0].clientX;
-            touchEndX.current = null;
-          }}
-          onTouchMove={(e) => {
-            touchEndX.current = e.touches[0].clientX;
-          }}
-          onTouchEnd={() => {
-            if (touchStartX.current === null || touchEndX.current === null) return;
-            const delta = touchEndX.current - touchStartX.current;
-            if (delta > touchThreshold) {
-              prevSlide();
-            } else if (delta < -touchThreshold) {
-              nextSlide();
-            }
-          }}
-        >
-          <div className="overflow-hidden">
-            <div 
-              className="flex transition-transform duration-500 ease-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {fleetData.map((car) => (
-                <div key={car.id} className="min-w-full flex-shrink-0">{renderCard(car)}</div>
-              ))}
-            </div>
-          </div>
-          <div className="absolute left-6 right-6 top-24 flex items-center justify-between pointer-events-none">
+        <div className="relative">
+          <Swiper
+            modules={[Navigation, Pagination, A11y]}
+            spaceBetween={16}
+            centeredSlides
+            slidesPerView={1.05}
+            pagination={{ clickable: true }}
+            onBeforeInit={(swiper) => {
+              // @ts-expect-error Swiper types allow manual assignment
+              swiper.params.navigation.prevEl = prevRef.current;
+              // @ts-expect-error Swiper types allow manual assignment
+              swiper.params.navigation.nextEl = nextRef.current;
+            }}
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            }}
+            breakpoints={{
+              640: { slidesPerView: 1.3, centeredSlides: true, spaceBetween: 20 },
+              768: { slidesPerView: 2, centeredSlides: false, spaceBetween: 20 },
+              1024: { slidesPerView: 3, centeredSlides: false, spaceBetween: 24 }
+            }}
+            className="!pb-12"
+            style={{ overflow: 'visible' }}
+          >
+            {fleetData.map((car) => (
+              <SwiperSlide key={car.id} className="pb-2">
+                {renderCard(car)}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <div className="pointer-events-none absolute left-0 right-0 top-1/4 flex items-center justify-between px-1 sm:px-2 z-20">
             <button
-              onClick={prevSlide}
-              className="pointer-events-auto h-10 w-10 flex items-center justify-center bg-white/95 text-slate-700 rounded-full shadow-md border border-slate-200 hover:bg-white transition"
+              ref={prevRef}
+              className="pointer-events-auto h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-slate-900/70 text-white flex items-center justify-center shadow-md border border-white/40"
               aria-label="Previous vehicle"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
-              onClick={nextSlide}
-              className="pointer-events-auto h-10 w-10 flex items-center justify-center bg-white/95 text-slate-700 rounded-full shadow-md border border-slate-200 hover:bg-white transition"
+              ref={nextRef}
+              className="pointer-events-auto h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-slate-900/70 text-white flex items-center justify-center shadow-md border border-white/40"
               aria-label="Next vehicle"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
-          <div className="flex justify-center mt-4 space-x-2">
-            {fleetData.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className={`h-2 w-2 rounded-full transition ${currentSlide === idx ? 'bg-teal-600 w-4' : 'bg-slate-300'}`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop grid */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {fleetData.map((car) => renderCard(car))}
         </div>
       </div>
     </div>
