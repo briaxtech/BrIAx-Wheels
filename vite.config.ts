@@ -3,10 +3,6 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  define: {
-    // This prevents "process is not defined" errors in the browser
-    'process.env': process.env || {},
-  },
   test: {
     globals: true,
     environment: 'jsdom',

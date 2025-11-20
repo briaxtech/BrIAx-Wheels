@@ -73,32 +73,18 @@ MANEJO DE OBJECIONES:
 let chatSession: Chat | null = null;
 let currentLanguage: Language = 'en';
 
-// Helper to safely get API Key
-const getApiKey = () => {
-  try {
-    // In Vite with define: { 'process.env': ... }, this works.
-    // We also check if process is defined to be extra safe.
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
-    }
-  } catch (e) {
-    console.warn("Error accessing API Key:", e);
-  }
-  return '';
-};
-
 export const getChatSession = (language: Language): Chat => {
   // Create new session if language changes or none exists
   if (!chatSession || currentLanguage !== language) {
     currentLanguage = language;
     
-    const apiKey = getApiKey();
+    const apiKey = process.env.API_KEY;
     
     if (!apiKey) {
       console.warn("Gemini Service: API Key is missing. Chatbot will not function correctly.");
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = new GoogleGenAI({ apiKey: apiKey || '' });
     
     const languageInstruction = language === 'es' 
       ? "CONTEXTO: El usuario está viendo la versión en ESPAÑOL del sitio web. Prioriza responder en Español." 
@@ -116,8 +102,7 @@ export const getChatSession = (language: Language): Chat => {
 
 export const sendMessageToGemini = async (message: string, language: Language): Promise<string> => {
   try {
-    const apiKey = getApiKey();
-    if (!apiKey) {
+    if (!process.env.API_KEY) {
       throw new Error("API_KEY_MISSING");
     }
 
