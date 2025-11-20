@@ -86,79 +86,81 @@ export const Chatbot: React.FC<ChatbotProps> = ({ language }) => {
 
       {/* Chat Window */}
       <div 
-        className={`fixed bottom-24 right-4 left-4 md:left-auto md:right-6 z-40 w-[calc(100%-2rem)] md:w-full max-w-sm md:max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 transform origin-bottom-right ${
+        className={`fixed bottom-16 right-3 left-3 md:left-auto md:right-6 z-40 md:w-full max-w-sm md:max-w-md bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transition-all duration-300 transform origin-bottom-right ${
           isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'
         }`}
-        style={{ maxHeight: '70vh' }}
+        style={{ height: '80vh', maxHeight: 'calc(100vh - 5rem)' }}
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-500 p-4 flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-             </svg>
-          </div>
-          <div>
-            <h3 className="text-white font-bold">{t.headerTitle}</h3>
-            <p className="text-teal-100 text-xs">{t.headerSubtitle}</p>
-          </div>
-        </div>
-
-        {/* Messages Area */}
-        <div className="h-[55vh] md:h-96 overflow-y-auto no-scrollbar p-4 bg-slate-50 space-y-4 scroll-smooth">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div 
-                className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
-                  msg.role === 'user' 
-                    ? 'bg-teal-600 text-white rounded-tr-none' 
-                    : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
-                }`}
-              >
-                {msg.text}
-              </div>
+        <div className="flex flex-col h-full md:h-auto md:max-h-[70vh]">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-teal-600 to-teal-500 p-4 flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+               <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+               </svg>
             </div>
-          ))}
-          {isLoading && (
-             <div className="flex justify-start">
-               <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm flex space-x-2">
-                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></div>
-                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></div>
-               </div>
-             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            <div>
+              <h3 className="text-white font-bold">{t.headerTitle}</h3>
+              <p className="text-teal-100 text-xs">{t.headerSubtitle}</p>
+            </div>
+          </div>
 
-        {/* Input Area */}
-        <form 
-          onSubmit={handleSend} 
-          className="p-4 bg-white border-t border-slate-100"
-          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)' }}
-        >
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={t.placeholder}
-              className="flex-1 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm"
-            />
-            <button 
-              type="submit"
-              disabled={!inputText.trim() || isLoading}
-              className="p-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto no-scrollbar p-4 bg-slate-50 space-y-4 scroll-smooth min-h-[220px]">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div 
+                  className={`max-w-[80%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-teal-600 text-white rounded-tr-none' 
+                      : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+               <div className="flex justify-start">
+                 <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm flex space-x-2">
+                   <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                   <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></div>
+                   <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></div>
+                 </div>
+               </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
-          <div className="text-center mt-2">
-             <span className="text-[10px] text-slate-400">{t.poweredBy}</span>
-          </div>
-        </form>
+
+          {/* Input Area */}
+          <form 
+            onSubmit={handleSend} 
+            className="p-4 bg-white border-t border-slate-100"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)' }}
+          >
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={t.placeholder}
+                className="flex-1 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none text-sm"
+              />
+              <button 
+                type="submit"
+                disabled={!inputText.trim() || isLoading}
+                className="p-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </div>
+            <div className="text-center mt-2">
+               <span className="text-[10px] text-slate-400">{t.poweredBy}</span>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );

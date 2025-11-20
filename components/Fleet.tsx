@@ -171,7 +171,7 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
 
         {/* Mobile carousel */}
         <div 
-          className="md:hidden relative max-w-md mx-auto w-full px-4 box-border"
+          className="md:hidden relative mx-auto w-full px-4 box-border"
           onTouchStart={(e) => {
             touchStartX.current = e.touches[0].clientX;
             touchEndX.current = null;
