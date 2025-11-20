@@ -10,7 +10,7 @@ const fleetData: Car[] = [
     pricePerDay: 35,
     passengers: 4,
     transmission: 'Manual',
-    imageUrl: 'https://images.unsplash.com/photo-1519507673952-0d4a889527ce?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80',
     features: ['Bluetooth', 'A/C', 'City Mode']
   },
   {
@@ -20,17 +20,17 @@ const fleetData: Car[] = [
     pricePerDay: 55,
     passengers: 5,
     transmission: 'Automatic',
-    imageUrl: 'https://images.unsplash.com/photo-1603365975371-069a72986637?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80',
     features: ['Nav', 'Apple CarPlay', 'Cruise Control']
   },
   {
     id: '3',
-    name: 'Audi Q3 Sportback',
+    name: 'Audi Q3',
     category: 'SUV',
     pricePerDay: 85,
     passengers: 5,
     transmission: 'Automatic',
-    imageUrl: 'https://images.unsplash.com/photo-1541443131876-44b03de101c5?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1610889535662-12a958a78970?auto=format&fit=crop&w=600&q=80',
     features: ['Leather Seats', 'Panoramic Roof', '4x4']
   },
   {
@@ -50,7 +50,7 @@ const fleetData: Car[] = [
     pricePerDay: 95,
     passengers: 4,
     transmission: 'Automatic',
-    imageUrl: 'https://images.unsplash.com/photo-1594070319944-71548ddce2c0?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1534552858327-752212b94146?auto=format&fit=crop&w=600&q=80',
     features: ['Soft Top', 'Sport Mode', 'Premium Sound']
   },
   {
@@ -60,7 +60,7 @@ const fleetData: Car[] = [
     pricePerDay: 110,
     passengers: 4,
     transmission: 'Automatic',
-    imageUrl: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80',
     features: ['Off-road Ready', 'Removable Top', 'Tow Bar']
   },
 ];
@@ -91,13 +91,13 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {fleetData.map((car) => (
             <div key={car.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col">
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-48 overflow-hidden bg-slate-200">
                 <img 
                   src={car.imageUrl} 
                   alt={car.name} 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-800 uppercase tracking-wide">
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-800 uppercase tracking-wide shadow-sm">
                   {t.categories[car.category as keyof typeof t.categories] || car.category}
                 </div>
               </div>
