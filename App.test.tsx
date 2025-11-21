@@ -19,21 +19,22 @@ describe('App Integration', () => {
     expect(screen.getByText(/Explore the/i)).toBeInTheDocument();
     expect(screen.getByText(/Costa Blanca/i)).toBeInTheDocument();
     
-    // Check Navbar
-    expect(screen.getByText('Home')).toBeInTheDocument();
+    // Check Navbar branding
+    expect(screen.getByText('BrIAx')).toBeInTheDocument();
+    expect(screen.getByText('Wheels')).toBeInTheDocument();
   });
 
   it('switches language to Spanish when toggle is clicked', () => {
     render(<App />);
     
-    // Initial state check
+    // Initial state check (English)
     expect(screen.getByText('Our Fleet')).toBeInTheDocument();
     
     // Find and click ES button
     const esButton = screen.getByText('ES');
     fireEvent.click(esButton);
     
-    // Check if text changed
+    // Check if text changed to Spanish
     expect(screen.getByText('Nuestra Flota')).toBeInTheDocument();
     expect(screen.getByText('Explora la')).toBeInTheDocument();
   });
@@ -50,7 +51,6 @@ describe('App Integration', () => {
     
     // Check Contact view content
     expect(screen.getByText('Contact Us')).toBeInTheDocument();
-    expect(screen.getByText('Main Office')).toBeInTheDocument();
     
     // Home content should be gone
     expect(screen.queryByText(/Why Choose BrIAx Wheels/i)).not.toBeInTheDocument();

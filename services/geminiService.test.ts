@@ -21,27 +21,26 @@ vi.mock('@google/genai', () => {
 });
 
 describe('Gemini Service', () => {
-  const originalEnv = process.env;
+  // Spy on console to prevent noise in test output
   const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env = { ...originalEnv, API_KEY: 'test-key' };
+    // Use stubEnv for safe environment variable mocking in Vitest
+    vi.stubEnv('API_KEY', 'test-key-123');
   });
 
   afterEach(() => {
-    process.env = originalEnv;
+    vi.unstubAllEnvs();
   });
 
   it('should initialize GoogleGenAI with the provided key', () => {
-    process.env.API_KEY = 'test-api-key';
-    
-    // We trigger a new session by changing language to ensure logic runs
-    // Note: geminiService implements a singleton pattern which makes testing initialization tricky
-    // without exposing a reset method. We rely on the language switch to trigger new creation.
+    // We trigger a new session by requesting 'en' language
+    // logic in geminiService will read process.env.API_KEY
     getChatSession('en');
     
-    expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: 'test-api-key' });
+    // Verify the SDK was initialized with the stubbed key
+    expect(GoogleGenAI).toHaveBeenCalledWith({ apiKey: 'test-key-123' });
   });
 
   it('should create a chat session successfully', () => {
@@ -49,11 +48,12 @@ describe('Gemini Service', () => {
      expect(chat).toBeDefined();
   });
 
-  it('should warn if API key is missing but still attempt to create session (defensive coding)', () => {
-    delete process.env.API_KEY;
+  it('should warn if API key is missing (defensive coding)', () => {
+    // Remove the key for this specific test
+    vi.stubEnv('API_KEY', '');
     
-    // Trigger logic
-    getChatSession('es'); // Use different lang to force re-eval
+    // Force session recreation by switching language
+    getChatSession('es'); 
     
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('API Key is missing'));
   });
