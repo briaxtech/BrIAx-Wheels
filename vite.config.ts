@@ -5,12 +5,15 @@ import process from 'node:process';
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
+  
+  // Check if we are running tests
+  const isTest = mode === 'test';
 
   return {
     plugins: [react()],
-    define: {
-      // STRICTLY define only the specific API_KEY to be replaced at build time.
-      // Default to '' to ensure JSON.stringify doesn't return undefined causing build errors.
+    define: isTest ? {} : {
+      // ONLY replace process.env.API_KEY during actual build/serve, NOT during tests.
+      // This allows Vitest to mock process.env.API_KEY dynamically using vi.stubEnv.
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
     },
     test: {
