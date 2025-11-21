@@ -30,9 +30,10 @@ describe('App Integration', () => {
     // Initial state check (English)
     expect(screen.getByText('Our Fleet')).toBeInTheDocument();
     
-    // Find and click ES button
-    const esButton = screen.getByText('ES');
-    fireEvent.click(esButton);
+    // FIX: Use getAllByText because 'ES' appears in both Desktop and Mobile menus
+    // We select the first one [0] to simulate a user click
+    const esButtons = screen.getAllByText('ES');
+    fireEvent.click(esButtons[0]);
     
     // Check if text changed to Spanish
     expect(screen.getByText('Nuestra Flota')).toBeInTheDocument();
@@ -45,9 +46,9 @@ describe('App Integration', () => {
     // Ensure we are on Home
     expect(screen.getByText(/Why Choose BrIAx Wheels/i)).toBeInTheDocument();
     
-    // Click Contact
-    const contactLink = screen.getByText('Contact & Location');
-    fireEvent.click(contactLink);
+    // Click Contact. Using getAllByText to be safe against duplicate links in mobile menu
+    const contactLinks = screen.getAllByText('Contact & Location');
+    fireEvent.click(contactLinks[0]);
     
     // Check Contact view content
     expect(screen.getByText('Contact Us')).toBeInTheDocument();
