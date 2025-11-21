@@ -16,23 +16,24 @@ describe('Chatbot Component', () => {
   it('renders correctly but starts closed', () => {
     render(<Chatbot language="en" />);
     
-    // The toggle button should be visible
-    const toggleBtn = screen.getAllByRole('button')[0]; // Assuming first button is toggle
-    expect(toggleBtn).toBeInTheDocument();
+    // The new design uses a launcher card with specific text
+    // We search for the button text "Chat with Sol"
+    const launcherButtonText = screen.getByText(/Chat with Sol/i);
+    expect(launcherButtonText).toBeInTheDocument();
     
-    // The chat window content should not be visible (or have scale-0/opacity-0 classes)
+    // The chat window content should not be visible yet
     const welcomeMsg = screen.queryByText(/I'm Sol/i);
     expect(welcomeMsg).not.toBeVisible();
   });
 
-  it('opens when the toggle button is clicked', async () => {
+  it('opens when the launcher is clicked', async () => {
     render(<Chatbot language="en" />);
     
-    // Click toggle
-    const toggleBtn = screen.getByRole('button', { name: '' }); // Icons usually don't have accessible names unless aria-label is set
-    fireEvent.click(toggleBtn);
+    // Find the launcher text/button and click it
+    const launcherText = screen.getByText(/Chat with Sol/i);
+    fireEvent.click(launcherText);
     
-    // Welcome message should appear
+    // Welcome message should appear in the chat window
     await waitFor(() => {
       expect(screen.getByText(/I'm Sol/i)).toBeVisible();
     });
@@ -45,16 +46,17 @@ describe('Chatbot Component', () => {
 
     render(<Chatbot language="en" />);
     
-    // Open chat
-    fireEvent.click(screen.getAllByRole('button')[0]);
+    // Open chat by clicking the launcher text
+    fireEvent.click(screen.getByText(/Chat with Sol/i));
     
     // Find input and type
     const input = screen.getByPlaceholderText(/Ask about cars/i);
     fireEvent.change(input, { target: { value: 'Do you have SUVs?' } });
     
-    // Click send
-    const sendBtn = screen.getByRole('button', { name: '' }); // The submit button inside form
-    fireEvent.submit(sendBtn.closest('form')!);
+    // Click send (the submit button inside form is the only button in the open chat view with an svg usually, or we target form submit)
+    const inputElement = screen.getByDisplayValue('Do you have SUVs?');
+    const form = inputElement.closest('form');
+    if (form) fireEvent.submit(form);
     
     // Check if user message is displayed
     expect(screen.getByText('Do you have SUVs?')).toBeInTheDocument();
@@ -65,13 +67,13 @@ describe('Chatbot Component', () => {
     });
   });
 
-  it('updates welcome message when language changes', () => {
+  it('updates launcher text when language changes', () => {
     const { rerender } = render(<Chatbot language="en" />);
-    fireEvent.click(screen.getAllByRole('button')[0]); // Open chat
-    expect(screen.getByText(/I'm Sol/i)).toBeInTheDocument();
+    expect(screen.getByText(/Chat with Sol/i)).toBeInTheDocument();
 
-    // Change prop
+    // Change prop to Spanish
     rerender(<Chatbot language="es" />);
-    expect(screen.getByText(/Soy Sol/i)).toBeInTheDocument();
+    // Should now see Spanish text
+    expect(screen.getByText(/Hablar con Sol/i)).toBeInTheDocument();
   });
 });
