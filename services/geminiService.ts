@@ -90,14 +90,14 @@ export const sendMessageToGemini = async (message: string, language: Language): 
     // Handle Missing Key Error specifically
     if (error.message === "API_KEY_MISSING") {
         return language === 'es'
-          ? "Error de configuración: Falta la API Key."
-          : "Configuration Error: API Key is missing.";
+          ? "Error de configuración: Falta la clave API. Por favor, configura la variable de entorno API_KEY en tu despliegue."
+          : "Configuration Error: API Key is missing. Please set the API_KEY environment variable in your deployment settings.";
     }
 
     // Handle Invalid Key Error (403 or explicit message)
     if (error.message?.includes("API key not valid") || error.toString().includes("403")) {
        return language === 'es'
-        ? "Error de autorización: API Key inválida."
+        ? "Error de autorización: La clave API no es válida."
         : "Authorization Error: API Key is invalid.";
     }
 
