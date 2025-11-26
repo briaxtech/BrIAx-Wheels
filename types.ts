@@ -22,3 +22,11 @@ export enum ViewState {
 }
 
 export type Language = 'en' | 'es';
+
+// Add types for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}

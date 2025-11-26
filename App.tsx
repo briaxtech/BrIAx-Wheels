@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Features } from './components/Features';
@@ -10,7 +10,15 @@ import { translations } from './translations';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
-  const [language, setLanguage] = useState<Language>('en');
+  
+  // Initialize language based on browser preference
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window !== 'undefined' && window.navigator) {
+      const browserLang = window.navigator.language || 'en';
+      return browserLang.toLowerCase().startsWith('es') ? 'es' : 'en';
+    }
+    return 'en';
+  });
 
   const t = translations[language].contact;
 
@@ -25,7 +33,6 @@ const App: React.FC = () => {
         currentView={currentView} 
         onNavigate={handleNavigate} 
         language={language}
-        setLanguage={setLanguage}
       />
       
       <main className="flex-grow">
@@ -46,14 +53,14 @@ const App: React.FC = () => {
         )}
 
         {currentView === ViewState.CONTACT && (
-          <div className="py-24 max-w-7xl mx-auto px-4">
-            <h1 className="text-4xl font-bold mb-8 text-slate-900">{t.title}</h1>
-            <div className="grid md:grid-cols-2 gap-12">
+          <div className="py-12 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-slate-900">{t.title}</h1>
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                <div>
                  <p className="text-lg text-slate-600 mb-6">
                    {t.subtitle}
                  </p>
-                 <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100">
+                 <div className="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-100">
                    <h3 className="font-bold text-xl mb-4">{t.office}</h3>
                    <p className="mb-2">{t.airport}</p>
                    <p className="mb-2">{t.hall}</p>

@@ -6,10 +6,9 @@ interface NavbarProps {
   currentView: ViewState;
   onNavigate: (view: ViewState) => void;
   language: Language;
-  setLanguage: (lang: Language) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, language, setLanguage }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, language }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = translations[language].nav;
 
@@ -56,22 +55,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, languag
             
             <div className="h-6 w-px bg-slate-200 mx-2"></div>
             
-            <div className="flex items-center space-x-2 text-sm font-semibold">
-               <button 
-                 onClick={() => setLanguage('en')} 
-                 className={`${language === 'en' ? 'text-teal-600' : 'text-slate-400 hover:text-slate-600'} transition-colors`}
-               >
-                 EN
-               </button>
-               <span className="text-slate-300">/</span>
-               <button 
-                 onClick={() => setLanguage('es')} 
-                 className={`${language === 'es' ? 'text-teal-600' : 'text-slate-400 hover:text-slate-600'} transition-colors`}
-               >
-                 ES
-               </button>
-            </div>
-
             <button className="bg-teal-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-teal-700 transition shadow-lg shadow-teal-600/20">
               {t.book}
             </button>
@@ -79,21 +62,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, languag
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
-             <div className="flex items-center space-x-2 text-sm font-bold">
-               <button 
-                 onClick={() => setLanguage('en')} 
-                 className={`${language === 'en' ? 'text-teal-600' : 'text-slate-400'}`}
-               >
-                 EN
-               </button>
-               <span className="text-slate-300">/</span>
-               <button 
-                 onClick={() => setLanguage('es')} 
-                 className={`${language === 'es' ? 'text-teal-600' : 'text-slate-400'}`}
-               >
-                 ES
-               </button>
-            </div>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-slate-600 hover:text-slate-900 focus:outline-none p-2"

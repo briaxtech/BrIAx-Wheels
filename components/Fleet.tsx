@@ -79,14 +79,14 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
   const t = translations[language].fleet;
 
   return (
-    <div className="bg-slate-50 py-24" id="fleet">
+    <div className="bg-slate-50 py-16 md:py-24" id="fleet">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-12">
+          <div className="text-center md:text-left w-full md:w-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{t.title}</h2>
             <p className="text-slate-600 text-lg">{t.subtitle}</p>
           </div>
-          <button className="mt-4 md:mt-0 text-teal-600 font-semibold hover:text-teal-700 flex items-center group">
+          <button className="hidden md:flex mt-4 md:mt-0 text-teal-600 font-semibold hover:text-teal-700 items-center group">
             {t.viewAll} 
             <svg className="w-5 h-5 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -94,10 +94,10 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
           </button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {fleetData.map((car) => (
             <div key={car.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col group">
-              <div className="relative h-56 overflow-hidden bg-slate-200">
+              <div className="relative h-48 md:h-56 overflow-hidden bg-slate-200">
                 <img 
                   src={car.imageUrl} 
                   alt={car.name} 
@@ -109,7 +109,7 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
                 </div>
               </div>
               
-              <div className="p-6 flex-1 flex flex-col">
+              <div className="p-5 md:p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                    <h3 className="text-xl font-bold text-slate-900">{car.name}</h3>
                 </div>
@@ -154,6 +154,17 @@ export const Fleet: React.FC<FleetProps> = ({ language }) => {
             </div>
           ))}
         </div>
+        
+        {/* Mobile View All Button */}
+        <div className="mt-8 flex md:hidden justify-center">
+          <button className="text-teal-600 font-semibold hover:text-teal-700 flex items-center group">
+            {t.viewAll} 
+            <svg className="w-5 h-5 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </div>
   );

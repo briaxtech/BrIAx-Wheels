@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import App from './App';
 
 // Mock the Chatbot and Fleet to simplify integration test
@@ -12,10 +12,20 @@ vi.mock('./components/Chatbot', () => ({
 window.scrollTo = vi.fn();
 
 describe('App Integration', () => {
-  it('renders the default view (Home) in English', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('renders default to English when navigator language is English', () => {
+    // Mock navigator.language
+    Object.defineProperty(window, 'navigator', {
+      value: { language: 'en-US' },
+      writable: true
+    });
+
     render(<App />);
     
-    // Check for Hero title part
+    // Check for English content
     expect(screen.getByText(/Explore the/i)).toBeInTheDocument();
     expect(screen.getByText(/Costa Blanca/i)).toBeInTheDocument();
     
@@ -24,29 +34,35 @@ describe('App Integration', () => {
     expect(screen.getByText('Wheels')).toBeInTheDocument();
   });
 
-  it('switches language to Spanish when toggle is clicked', () => {
+  it('automatically detects Spanish browser language', () => {
+     // Mock navigator.language to Spanish
+     Object.defineProperty(window, 'navigator', {
+      value: { language: 'es-ES' },
+      writable: true
+    });
+
     render(<App />);
     
-    // Initial state check (English)
-    expect(screen.getByText('Our Fleet')).toBeInTheDocument();
-    
-    // FIX: Use getAllByText because 'ES' appears in both Desktop and Mobile menus
-    // We select the first one [0] to simulate a user click
-    const esButtons = screen.getAllByText('ES');
-    fireEvent.click(esButtons[0]);
-    
-    // Check if text changed to Spanish
+    // Check for Spanish content (auto-detected)
     expect(screen.getByText('Nuestra Flota')).toBeInTheDocument();
     expect(screen.getByText('Explora la')).toBeInTheDocument();
   });
 
   it('navigates between views', () => {
+    // Ensure English for this test
+    Object.defineProperty(window, 'navigator', {
+      value: { language: 'en-US' },
+      writable: true
+    });
+
     render(<App />);
     
     // Ensure we are on Home
     expect(screen.getByText(/Why Choose BrIAx Wheels/i)).toBeInTheDocument();
     
-    // Click Contact. Using getAllByText to be safe against duplicate links in mobile menu
+    // Click Contact. 
+    // Since we removed language toggle, "Contact & Location" should be unique in the desktop menu (mobile menu hidden)
+    // or we can use getAllByText if mobile menu renders it in DOM but hidden.
     const contactLinks = screen.getAllByText('Contact & Location');
     fireEvent.click(contactLinks[0]);
     

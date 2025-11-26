@@ -10,9 +10,9 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
   const t = translations[language].footer;
 
   return (
-    <footer className="bg-slate-900 text-white py-12 border-t border-slate-800">
+    <footer className="bg-slate-900 text-white py-12 md:py-16 border-t border-slate-800 pb-28 md:pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 md:mb-12">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center mr-2">
@@ -58,9 +58,9 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
           </div>
         </div>
         
-        <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} {t.rights}</p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
+        <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm text-center md:text-left">
+          <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} {t.rights}</p>
+          <div className="flex space-x-4">
             <a href="#" className="hover:text-white transition">{t.privacy}</a>
             <a href="#" className="hover:text-white transition">{t.terms}</a>
           </div>
