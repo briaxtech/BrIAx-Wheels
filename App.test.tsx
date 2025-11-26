@@ -8,8 +8,8 @@ vi.mock('./components/Chatbot', () => ({
   Chatbot: () => <div data-testid="chatbot-mock">Chatbot</div>
 }));
 
-// Mock scroll behavior
-window.scrollTo = vi.fn();
+// Mock scroll behavior - Cast to any to avoid TS overload mismatch errors during build
+window.scrollTo = vi.fn() as any;
 
 describe('App Integration', () => {
   afterEach(() => {
@@ -62,7 +62,6 @@ describe('App Integration', () => {
     
     // Click Contact. 
     // Since we removed language toggle, "Contact & Location" should be unique in the desktop menu (mobile menu hidden)
-    // or we can use getAllByText if mobile menu renders it in DOM but hidden.
     const contactLinks = screen.getAllByText('Contact & Location');
     fireEvent.click(contactLinks[0]);
     
