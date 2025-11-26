@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface Car {
   id: string;
   name: string;
@@ -23,10 +25,15 @@ export enum ViewState {
 
 export type Language = 'en' | 'es';
 
-// Add types for Web Speech API
+// Add types for Web Speech API and ElevenLabs Widget
 declare global {
   interface Window {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'elevenlabs-convai': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { 'agent-id': string }, HTMLElement>;
+    }
   }
 }
